@@ -1,1 +1,123 @@
-<h1> Stores</h1>
+<section class="mb-lg-14 mb-8 mt-8">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 col-lg-3 col-md-4 mb-4 mb-md-0">
+        <div *ngIf="store$ | async as store">
+          <div class="d-flex flex-column">
+            <div>
+              <img
+                [src]="store.logoUrl"
+                [alt]="store.name"
+                class="rounded-circle icon-shape icon-xxl"
+              />
+            </div>
+            <div class="mt-4">
+              <h5 class="mb-1">
+                {{ store.name }}
+              </h5>
+              <div class="small text-muted">
+                <ng-container *ngFor="let subitem of store.id; last as last"
+                  ><span>{{ subitem }}</span
+                  ><span *ngIf="!last" class="mx-1"
+                    ><svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      width="8"
+                      height="8"
+                      fill="#C1C7C6"
+                      class="bi bi-circle-fill align-middle"
+                      viewBox="0 0 16 16"
+                    >
+                      <circle cx="12" cy="12" r="8" /></svg
+                  ></span>
+                </ng-container>
+              </div>
+              <div>
+                <!-- badge -->
+                <div class="badge text-bg-light">
+                  It is only {{ store.distanceInMeters }} km away from you!
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div><br>
+    <div
+      class="mb-8 bg-light d-lg-flex justify-content-lg-between rounded"
+      *ngIf="store$ | async as store"
+    >
+      <div class="align-items-center p-8">
+        <div class="mb-3">
+          <h5 class="mb-0 fw-bold">{{ store.name }}</h5>
+          <p class="mb-0 text-muted">
+            Whatever the occasion, we're got you covered.
+          </p>
+        </div>
+        <div class="position-relative">
+          <form [formGroup]="search" (ngSubmit)="onSearchSubmitted(search)">
+            <input
+              type="email"
+              class="form-control"
+              formControlName="title"
+              placeholder="Search E-Grocery Super Market"
+            />
+          </form>
+          <span class="position-absolute end-0 top-0 mt-2 me-3">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="14"
+              height="14"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="feather feather-search"
+            >
+              <circle cx="12" cy="12" r="8"></circle>
+              <line xl="21" yl="21" x2="16.65" y2="16.65"></line>
+            </svg>
+          </span>
+        </div>
+      </div>
+      <div class="py-4">
+        <img
+          src="assets/images/svg-graphics/store-graphics.svg"
+          alt
+          class="img-fluid"
+        />
+      </div>
+    </div>
+
+    <section class="my-lg-14 my-8">
+      <div class="container">
+        <div class="row">
+          <div class="col-12 mb-6">
+            <h3 class="mb-0">E-Grocery Super Market Products:</h3>
+          </div>
+          <div class="row justify-content-around">
+            <div
+              class="card card-product col-2"
+              *ngFor="let item of productsList$ | async"
+            >
+              <div class="card-body">
+                <div class="text-center position-relative">
+                  <!-- img -->
+                  <a
+                    ><img
+                      src="{{ item.imageUrl }}"
+                      alt="item.name"
+                      class="mb-3 img-fluid"
+                  /></a>
+                </div>
+                <!-- title -->
+                <h2 class="fs-6">{{ item.name }}</h2>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</section>
