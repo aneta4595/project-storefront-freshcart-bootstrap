@@ -1,0 +1,151 @@
+<section class="mb-lg-10 mt-lg-14 my-8">
+  <div class="container">
+    <div class="row">
+      <div class="col-12 mb-6">
+        <h3 class="mb-0">Shop by category</h3>
+      </div>
+      <div
+        *ngFor="let item of categoriesList$ | async"
+        class="col-md-4 col-lg-3 mb-5"
+      >
+        <a
+          routerLink="categories/{{ item.id }}"
+          class="text-decoration-none text-inherit"
+          ><!-- card -->
+          <div class="card card-product">
+            <div class="card-body text-center py-8">
+              <!-- img --><img
+                [src]="item.imageUrl"
+                [alt]=""
+                class="mb-3"
+              /><!-- text -->
+              <div class="text-truncate">{{ item.name }}</div>
+            </div>
+          </div></a
+        >
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="my-lg-14 my-8">
+  <div class="container">
+    <div class="row">
+        <div class="col-12 mb-6">
+            <h3 class="mb-0">Fruits & Vegetables</h3>
+          </div>
+          <div class="row justify-content-around">
+      <div class="card card-product col-2" *ngFor=" let item of fruitsAndVegetables$|async">
+        <div class="card-body">
+          <div class="text-center position-relative">
+            <!-- img -->
+            <a
+              ><img
+                src="{{item.imageUrl}}"
+                alt="Grocery Ecommerce Template"
+                class="mb-3 img-fluid"
+            /></a>
+          </div>
+          <!-- title -->
+          <h2 class="fs-6">{{item.name}}</h2>
+          <!-- price -->
+          <div class="d-flex justify-content-between align-items-center mt-3">
+            <div><span class="text-dark">{{item.price|currency}}</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+  </div>
+</section>
+
+
+<<section class="my-lg-14 my-8">
+    <div class="container">
+      <div class="row">
+          <div class="col-12 mb-6">
+              <h3 class="mb-0">Snack & Munchies</h3>
+            </div>
+            <div class="row justify-content-around">
+        <div class="card card-product col-2" *ngFor=" let item of SnackAndMunchies$|async">
+          <div class="card-body">
+            <div class="text-center position-relative">
+              <!-- img -->
+              <a
+                ><img
+                  src="{{item.imageUrl}}"
+                  alt="Grocery Ecommerce Template"
+                  class="mb-3 img-fluid"
+              /></a>
+            </div>
+            <!-- title -->
+            <h2 class="fs-6">{{item.name}}</h2>
+            <!-- price -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <div><span class="text-dark">{{item.price|currency}}</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+</div>
+  </section>
+
+<section class="my-lg-14 my-8">
+  <div class="container">
+    <div class="row" *ngIf="storesList$ | async as stores">
+      <h2>Stores</h2>
+      <p>
+        We have
+        <span class="text-primary">{{ stores.length }} </span>
+
+        vendors
+      </p>
+    </div>
+    <div class="row">
+      <div
+        *ngFor="let item of storesList$ | async"
+        class="row col-md-4 col-lg-3 mb-5"
+      >
+        <div class="card flex-row p-8 card-product">
+          <div>
+            <img
+              [src]="item.logoUrl"
+              [alt]="item.name"
+              class="rounded-circle icon-shape icon-xl"
+            />
+          </div>
+          <div class="ms-6">
+            <h5 class="mb-1">
+              <a routerLink="stores/{{ item.id }}" class="text-inherit">{{
+                item.name
+              }}</a>
+            </h5>
+            <div class="small text-muted">
+              <ng-container *ngFor="let subitem of item.tagIds; last as last"
+                ><span>{{ subitem }}</span
+                ><span *ngIf="!last" class="mx-1"
+                  ><svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    width="4"
+                    height="4"
+                    fill="#C1C7C6"
+                    class="bi bi-circle-fill align-middle"
+                    viewBox="0 0 16 16"
+                  >
+                    <circle cx="8" cy="8" r="8" /></svg
+                ></span>
+              </ng-container>
+            </div>
+            <div>
+              <!-- badge -->
+              <div class="badge text-bg-light border">
+                {{ item.distanceInMeters }} km
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
