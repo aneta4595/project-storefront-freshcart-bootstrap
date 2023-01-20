@@ -8,7 +8,7 @@ import { map } from 'rxjs/operators';
 import { CategoryModel } from '../../models/category.model';
 import { StoreTagModel } from '../../models/store-tag.model';
 import { ProductModel } from '../../models/product.model';
-import { TagQuery } from '../../queries/tag.query';
+import { StoreQuery } from '../../queries/store.query';
 import { CategoriesService } from '../../services/categories.service';
 import { StoreTagsService } from '../../services/store-tags.service';
 import { ProductsService } from '../../services/products.service';
@@ -48,7 +48,7 @@ export class HomeComponent {
       )
     );
 
-  readonly storesList$: Observable<TagQuery[]> = combineLatest([
+  readonly storesList$: Observable<StoreQuery[]> = combineLatest([
     this._storesService.getAllStores(),
     this._storeTagsService.getAllTags(),
   ]).pipe(
@@ -67,7 +67,7 @@ export class HomeComponent {
   private _mapToTagQuery(
     stores: StoreModel[],
     tags: StoreTagModel[]
-  ): TagQuery[] {
+  ): StoreQuery[] {
     const tagMap = tags.reduce(
       (a, c) => ({ ...a, [c.id]: c }),
       {} as Record<string, StoreTagModel>
