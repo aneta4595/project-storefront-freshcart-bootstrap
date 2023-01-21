@@ -12,8 +12,8 @@ export class CategoriesService {
     return this._httpClient.get<CategoryModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-categories');
   }
 
-  getOneCategory(id: string): Observable<CategoryModel> {
-    return this._httpClient.get<CategoryModel>(`https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-categories/${id}`);
+  getOneCategory(categoryId: string): Observable<CategoryModel> {
+    return this._httpClient.get<CategoryModel>(`https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-categories/${categoryId}`);
   }
 
 }
