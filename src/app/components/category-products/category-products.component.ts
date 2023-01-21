@@ -3,6 +3,7 @@ import { FormControl, FormGroup } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import { Observable, combineLatest, of } from 'rxjs';
 import {  map, switchMap} from 'rxjs/operators';
+import { ProductQuery } from 'src/app/queries/product.query';
 import { CategoryModel } from '../../models/category.model';
 import { ProductModel } from '../../models/product.model';
 import { CategoriesService } from '../../services/categories.service';
@@ -24,12 +25,11 @@ export class CategoryProductsComponent {
     map((params) => params['categoryId'])
   );
 
-  readonly productList$: Observable<ProductModel[]> = combineLatest([
+  readonly productList$: Observable<ProductQuery[]> = combineLatest([
     this._productsService.getAllProducts(),
     this.categoryId$,
   ]).pipe(
-    map(([products, categoryId]) =>
-      products
+    map(([products, categoryId]) => this._mapToProductQuery(products)
         .filter((product) => product.categoryId.includes(categoryId))
         .sort((a, b) => b.featureValue - a.featureValue)));
 
@@ -60,4 +60,26 @@ export class CategoryProductsComponent {
     private _productsService: ProductsService
   ) { }
 
+  private _mapToProductQuery(products: ProductModel[]): ProductQuery[] {
+    return products.map((p) => ({
+      id: p.id,
+      name: p.name,
+      price: p.price,
+      categoryId: p.categoryId,
+      featureValue: p.featureValue,
+      imageUrl: p.imageUrl,
+      ratingCount: p.ratingCount,
+      ratingValue: p.ratingValue,
+      storeIds: p.storeIds,
+      ratingOptions: new Array(5).fill(0).map((_, index) => {
+        if(p.ratingValue >= index+1) {
+          return 1
+        } else if (p.ratingValue > index) {
+          return  0.5
+        } else {
+          return  0
+        }
+      }) 
+    }))
+  }
 }

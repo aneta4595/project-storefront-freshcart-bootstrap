@@ -13,13 +13,6 @@
         >
           <div class="offcanvas-header d-lg-none">
             <h5 class="offcanvas-title" id="offcanvasCategoryLabel">Filter</h5>
-            <!-- button -->
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="offcanvas"
-              aria-label="Close"
-            ></button>
           </div>
           <div class="offcanvas-body ps-lg-2 pt-lg-0">
             <div class="mb-8">
@@ -31,33 +24,24 @@
                 id="categoryCollapseMenu"
                 *ngFor="let item of categoriesList$ | async"
               >
-                <!-- w li zmiana zeby rozwijała się lista -->
-                <li
-                  class="nav-item border-bottom w-100 collapsed"
-                  data-bs-toggle="collapse"
-                  data-bs-target="#categoryFlushOne"
-                  aria-expanded="true"
-                  aria-controls="categoryFlushOne"
+                <a class="nav-link">
+                  {{ item.name }}
+                  <i class="feather-icon icon-chevron-right"></i>
+                </a>
+                <div
+                  id="categoryFlushOne"
+                  class="accordion-collapse collapse collapse"
+                  data-bs-parent="#categoryCollapseMenu"
+                  style
                 >
-                  <a class="nav-link">
-                    {{ item.name }}
-                    <i class="feather-icon icon-chevron-right"></i>
-                  </a>
-                  <div
-                    id="categoryFlushOne"
-                    class="accordion-collapse collapse collapse"
-                    data-bs-parent="#categoryCollapseMenu"
-                    style
-                  >
-                    <div>
-                      <ul class="nav flex-column ms-3">
-                        <li class="nav-item">
-                          <a class="nav-link">Milk</a>
-                        </li>
-                      </ul>
-                    </div>
+                  <div>
+                    <ul class="nav flex-column ms-3">
+                      <li class="nav-item">
+                        <a class="nav-link">Milk</a>
+                      </li>
+                    </ul>
                   </div>
-                </li>
+                </div>
               </ul>
             </div>
           </div>
@@ -93,8 +77,11 @@
                   (ngSubmit)="onFilterFormSubmitted(filterForm)"
                 >
                   <select class="form-select">
-                    <option *ngFor="let item of ordering$ | async" [value]="item">
-                      {{ item.name}}
+                    <option
+                      *ngFor="let item of ordering$ | async"
+                      [value]="item"
+                    >
+                      {{ item.name }}
                     </option>
                   </select>
                 </form>
@@ -144,13 +131,16 @@
                     </h2>
                     <div>
                       <!-- rating -->
-
                       <small class="text-warning">
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
-                        <i class="bi bi-star-fill"></i>
+                        <i
+                          *ngFor="let val of item.ratingOptions"
+                          class="bi"
+                          [ngClass]="{
+                            'bi-star-fill': val === 1,
+                            'bi-star': val === 0,
+                            'bi-star-half': val === 0.5
+                          }"
+                        ></i>
                       </small>
                       <span class="text-muted small"
                         >{{ item.ratingValue }}({{ item.ratingCount }})</span
