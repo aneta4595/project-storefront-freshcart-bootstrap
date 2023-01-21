@@ -1,1 +1,176 @@
-<h1> Categories</h1>
+<!-- section -->
+<div class="mt-8 mb-lg-14 mb-8">
+  <!-- container -->
+  <div class="container">
+    <div class="row gx-10">
+      <!-- col -->
+      <aside class="col-lg-3 col-md-4 mb-6 mb-6 mb-md-0">
+        <div
+          class="offcanvas offcanvas-start offcanvas-collapse w-md-50"
+          tabindex="-1"
+          id="offcanvasCategory"
+          aria-labelledby="offcanvasCategoryLabel"
+        >
+          <div class="offcanvas-header d-lg-none">
+            <h5 class="offcanvas-title" id="offcanvasCategoryLabel">Filter</h5>
+            <!-- button -->
+            <button
+              type="button"
+              class="btn-close"
+              data-bs-dismiss="offcanvas"
+              aria-label="Close"
+            ></button>
+          </div>
+          <div class="offcanvas-body ps-lg-2 pt-lg-0">
+            <div class="mb-8">
+              <!-- title -->
+              <h5 class="mb-3">Categories</h5>
+              <!-- nav -->
+              <ul
+                class="nav nav-category"
+                id="categoryCollapseMenu"
+                *ngFor="let item of categoriesList$ | async"
+              >
+                <!-- w li zmiana zeby rozwijała się lista -->
+                <li
+                  class="nav-item border-bottom w-100 collapsed"
+                  data-bs-toggle="collapse"
+                  data-bs-target="#categoryFlushOne"
+                  aria-expanded="true"
+                  aria-controls="categoryFlushOne"
+                >
+                  <a class="nav-link">
+                    {{ item.name }}
+                    <i class="feather-icon icon-chevron-right"></i>
+                  </a>
+                  <div
+                    id="categoryFlushOne"
+                    class="accordion-collapse collapse collapse"
+                    data-bs-parent="#categoryCollapseMenu"
+                    style
+                  >
+                    <div>
+                      <ul class="nav flex-column ms-3">
+                        <li class="nav-item">
+                          <a class="nav-link">Milk</a>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </aside>
+
+      <section class="col-lg-9 col-md-12">
+        <!-- card  -->
+        <div class="card mb-4 bg-light border-0">
+          <!-- card-body -->
+          <div class="card-body p-9" *ngIf="oneCategory$ | async as item">
+            <h2 class="mb-0 fs-1">{{ item.name }}</h2>
+          </div>
+        </div>
+        <!-- text -->
+        <div
+          class="d-lg-flex justify-content-between align-items-center"
+          *ngIf="productList$ | async as item"
+        >
+          <div class="mb-3 mb-lg-0">
+            <p class="mb-0">
+              <span class="text-dark">{{ item.length }}</span>
+              Products found
+            </p>
+          </div>
+          <!-- icon -->
+          <div class="d-md-flex justify-content-between align-items-center">
+            <div class="d-flex mt-2 mt-lg-0">
+              <div>
+                <!-- select option -->
+                <form
+                  [formGroup]="filterForm"
+                  (ngSubmit)="onFilterFormSubmitted(filterForm)"
+                >
+                  <select class="form-select">
+                    <option *ngFor="let item of ordering$ | async" [value]="item">
+                      {{ item.name}}
+                    </option>
+                  </select>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- row -->
+        <div class="row g-4 row-cols-1 mt-2">
+          <div class="col">
+            <!-- card -->
+            <div
+              class="card card-product"
+              *ngFor="let item of productList$ | async"
+            >
+              <!-- card body -->
+              <div class="card-body">
+                <div class="row align-items-center">
+                  <!-- col -->
+                  <div class="col-md-4 col-12">
+                    <div class="text-center position relative">
+                      <a>
+                        <!-- img -->
+                        <img
+                          src="{{ item.imageUrl }}"
+                          alt=""
+                          class="mb-3 img-fluid"
+                        />
+                      </a>
+                    </div>
+                  </div>
+                  <div class="col-md-8 col-12 flex-grow-1">
+                    <!-- heading -->
+                    <div
+                      class="text-small mb-1"
+                      *ngIf="oneCategory$ | async as item"
+                    >
+                      <a href="#!" class="text-decoration-none text-muted">
+                        <small>{{ item.name }}</small>
+                      </a>
+                    </div>
+                    <h2 class="fs-6">
+                      <a class="text-inherit text-decoration-none">{{
+                        item.name
+                      }}</a>
+                    </h2>
+                    <div>
+                      <!-- rating -->
+
+                      <small class="text-warning">
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                        <i class="bi bi-star-fill"></i>
+                      </small>
+                      <span class="text-muted small"
+                        >{{ item.ratingValue }}({{ item.ratingCount }})</span
+                      >
+                    </div>
+                    <div class="mt-6">
+                      <!-- price -->
+                      <div>
+                        <span class="text-dark">{{
+                          item.price | currency
+                        }}</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</div>
