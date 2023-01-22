@@ -72,19 +72,19 @@
             <div class="d-flex mt-2 mt-lg-0">
               <div>
                 <!-- select option -->
-                <form
+                <!-- <form
                   [formGroup]="filterForm"
                   (ngSubmit)="onFilterFormSubmitted(filterForm)"
                 >
                   <select class="form-select">
                     <option
-                      *ngFor="let item of ordering$ | async"
+                      *ngFor="let item of sorting$ | async"
                       [value]="item"
                     >
                       {{ item.name }}
                     </option>
                   </select>
-                </form>
+                </form> -->
               </div>
             </div>
           </div>
@@ -96,7 +96,7 @@
             <!-- card -->
             <div
               class="card card-product"
-              *ngFor="let item of productList$ | async"
+              *ngFor="let item of productsListOfPagination$ | async"
             >
               <!-- card body -->
               <div class="card-body">
@@ -164,3 +164,33 @@
     </div>
   </div>
 </div>
+<section class="my-lg-14 my-8">
+  <div class="container" >
+    <div class="row">
+      <div class="pt-10 d-flex flex-row justify-content-between">
+        <nav>
+          <h6>Limit</h6>
+          <ul class="pagination" *ngIf="limitOptions$|async as limit">
+            <li class="page-item" *ngFor="let item of limitOptions$ | async">
+
+              <a class="page-link" (click)="onPageSizeChange(item)">{{
+                item
+              }}</a>
+            </li>
+          </ul>
+        </nav>
+
+        <nav>
+          <h6>Pagination</h6>
+          <ul class="pagination">
+            <li class="page-item" *ngFor="let item of numberOfPages$ | async" >
+              <a class="page-link" (click)="onPageNumberChange(item)">{{
+                item
+              }}</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
+    </div>
+  </div>
+</section>
