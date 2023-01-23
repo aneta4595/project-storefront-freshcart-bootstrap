@@ -8,6 +8,7 @@ import { CategoryModel } from '../../models/category.model';
 import { CategoriesService } from '../../services/categories.service';
 import { ProductsService } from '../../services/products.service';
 import { ProductModel } from '../../models/product.model';
+import { PaginationQuery } from 'src/app/queries/pagination.query';
 
 @Component({
   selector: 'app-category-products',
@@ -55,10 +56,7 @@ export class CategoryProductsComponent {
 
   readonly limitOptions$: Observable<number[]> = of([5, 10, 15]);
 
-  readonly paginationParams$: Observable<{
-    pageNumber: number;
-    pageSize: number;
-  }> = this._activatedRoute.queryParams
+  readonly paginationParams$: Observable<PaginationQuery> = this._activatedRoute.queryParams
     .pipe(
       map((params) => ({
         pageNumber: params['pageNumber'] ? +params['pageNumber'] : 1,
