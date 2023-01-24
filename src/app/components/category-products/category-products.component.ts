@@ -1,13 +1,14 @@
 import { ChangeDetectionStrategy, Component, ViewEncapsulation } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import { Observable, combineLatest, of } from 'rxjs';
-import {  map, switchMap} from 'rxjs/operators';
-import { ProductQuery } from 'src/app/queries/product.query';
+import { map, shareReplay, startWith, switchMap, take, tap } from 'rxjs/operators';
+import { ProductQuery } from '../../queries/product.query';
 import { CategoryModel } from '../../models/category.model';
-import { ProductModel } from '../../models/product.model';
 import { CategoriesService } from '../../services/categories.service';
 import { ProductsService } from '../../services/products.service';
+import { ProductModel } from '../../models/product.model';
+import { PaginationQuery } from 'src/app/queries/pagination.query';
 
 @Component({
   selector: 'app-category-products',
@@ -18,9 +19,12 @@ import { ProductsService } from '../../services/products.service';
 })
 export class CategoryProductsComponent {
 
+  readonly sort: FormGroup = new FormGroup({ value: new FormControl() });
+
   readonly filterForm: FormGroup = new FormGroup({
     Featured: new FormControl(),
   });
+
   readonly categoryId$: Observable<string> = this._activatedRoute.params.pipe(
     map((params) => params['categoryId'])
   );
@@ -30,8 +34,8 @@ export class CategoryProductsComponent {
     this.categoryId$,
   ]).pipe(
     map(([products, categoryId]) => this._mapToProductQuery(products)
-        .filter((product) => product.categoryId.includes(categoryId))
-        .sort((a, b) => b.featureValue - a.featureValue)));
+      .filter((product) => product.categoryId.includes(categoryId))
+      .sort((a, b) => b.featureValue - a.featureValue)));
 
   readonly categoriesList$: Observable<CategoryModel[]> =
     this._categoriesService.getAllCategories();
@@ -43,13 +47,56 @@ export class CategoryProductsComponent {
         this._categoriesService.getOneCategory(data['categoryId'])
       )
     );
-    readonly ordering$: Observable<{name:string}[]> = of([
-      { name: 'Featured' },
-      { name: 'Price: Low to High'},
-      { name: 'Price: High to Low' },
-      { name: 'Avg. Rating' },
-    ]);
-  
+  // readonly sorting$: Observable<{ name: string, value: string}[]> = of([
+  //   { name: 'Featured', value: 'desc' },
+  //   { name: 'Price: Low to High', value: 'asc' },
+  //   { name: 'Price: High to Low', value:'desc' },
+  //   { name: 'Avg. Rating', value: 'desc'},
+  // ]);
+
+  readonly limitOptions$: Observable<number[]> = of([5, 10, 15]);
+
+  readonly paginationParams$: Observable<PaginationQuery> = this._activatedRoute.queryParams
+    .pipe(
+      map((params) => ({
+        pageNumber: params['pageNumber'] ? +params['pageNumber'] : 1,
+        pageSize: params['pageSize'] ? +params['pageSize'] : 5,
+      }))
+    )
+    .pipe(shareReplay(1));
+
+  readonly numberOfPages$: Observable<number[]> = combineLatest([
+    this.paginationParams$,
+    this.productList$,
+  ])
+    .pipe(
+      map(([params, products]) => {
+        let pageNumber: number[] = [];
+        let numberOfPages: number = Math.ceil(
+          products.length / params.pageSize
+        );
+        for (let i = 1; i <= numberOfPages; i++) {
+          pageNumber.push(i);
+        }
+        return pageNumber;
+      })
+    )
+    .pipe(shareReplay(1));
+
+
+  readonly productsListOfPagination$: Observable<ProductQuery[]> =
+    combineLatest([
+      this.productList$,
+      this.paginationParams$,
+      this.sort.valueChanges.pipe(map((form) => form.value), startWith(''))
+    ]).pipe(
+      map(([products, params]) =>
+        products.slice(
+          (params.pageNumber - 1) * params.pageSize,
+          params.pageNumber * params.pageSize
+        )
+      )
+    )
 
   onFilterFormSubmitted(filterForm: FormGroup): void {
   }
@@ -57,7 +104,7 @@ export class CategoryProductsComponent {
   constructor(
     private _categoriesService: CategoriesService,
     private _activatedRoute: ActivatedRoute,
-    private _productsService: ProductsService
+    private _productsService: ProductsService, private _router: Router
   ) { }
 
   private _mapToProductQuery(products: ProductModel[]): ProductQuery[] {
@@ -72,14 +119,49 @@ export class CategoryProductsComponent {
       ratingValue: p.ratingValue,
       storeIds: p.storeIds,
       ratingOptions: new Array(5).fill(0).map((_, index) => {
-        if(p.ratingValue >= index+1) {
+        if (p.ratingValue >= index + 1) {
           return 1
         } else if (p.ratingValue > index) {
-          return  0.5
+          return 0.5
         } else {
-          return  0
+          return 0
         }
-      }) 
+      })
     }))
+  }
+
+  onPageNumberChange(param: number): void {
+    this.paginationParams$
+      .pipe(
+        take(1),
+        tap((params) => {
+          this._router.navigate([], {
+            queryParams: {
+              pageNumber: param,
+              pageSize: params.pageSize,
+            },
+          });
+        })
+      )
+      .subscribe();
+  }
+
+  onPageSizeChange(param: number): void {
+    combineLatest([this.paginationParams$, this.productList$])
+      .pipe(
+        take(1),
+        tap(([params, products]) => {
+          this._router.navigate([], {
+            queryParams: {
+              pageSize: param,
+              pageNumber:
+                params.pageNumber <= Math.ceil(products.length / param)
+                  ? params.pageNumber
+                  : Math.ceil(products.length / param),
+            },
+          });
+        })
+      )
+      .subscribe();
   }
 }
