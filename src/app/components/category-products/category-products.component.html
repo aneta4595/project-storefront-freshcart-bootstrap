@@ -12,7 +12,7 @@
           aria-labelledby="offcanvasCategoryLabel"
         >
           <div class="offcanvas-header d-lg-none">
-            <h5 class="offcanvas-title" id="offcanvasCategoryLabel">Filter</h5>
+            <h5 class="offcanvas-title" id="offcanvasCategoryLabel"></h5>
           </div>
           <div class="offcanvas-body ps-lg-2 pt-lg-0">
             <div class="mb-8">
@@ -28,42 +28,121 @@
                   {{ item.name }}
                   <i class="feather-icon icon-chevron-right"></i>
                 </a>
-                <div
-                  id="categoryFlushOne"
-                  class="accordion-collapse collapse collapse"
-                  data-bs-parent="#categoryCollapseMenu"
-                  style
-                >
-                  <div>
-                    <ul class="nav flex-column ms-3">
-                      <li class="nav-item">
-                        <a class="nav-link">Milk</a>
-                      </li>
-                    </ul>
-                  </div>
-                </div>
               </ul>
+            </div>
+
+            <!-- search by store -->
+
+            <div class="mb-8">
+              <div class="mb-8">
+                <h5 class="mb-3">Stores</h5>
+                <div class="my-4">
+                  <form [formGroup]="searchStoreForm">
+                    <input
+                      type="text"
+                      formControlName="store"
+                      placeholder="Search by store"
+                    />
+                  </form>
+                </div>
+
+                <!-- checkbox - filter by store -->
+
+                <div class="form-check mb-2">
+                  <form [formGroup]="sortCheckboxForm">
+                    <div
+                      *ngFor="let item of storesList$ | async"
+                      class="form-check mb-2"
+                    >
+                      <input
+                        [id]="item"
+                        class="form-check-input"
+                        [formControlName]="item.id"
+                        type="checkbox"
+                      /><label [for]="item" class="form-check-label">{{
+                        item.name
+                      }}</label>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- filter by price -->
+
+            <div class="mb-8">
+              <div class="mb-8">
+                <h5 class="mb-3">Price</h5>
+                <div class="my-4">
+                  <form [formGroup]="filterPriceForm">
+                    <input
+                      type="text"
+                      formControlName="priceFrom"
+                      placeholder="Price from"
+                    /><input
+                      type="text"
+                      formControlName="priceTo"
+                      placeholder="Price To"
+                    />
+                  </form>
+                </div>
+              </div>
+            </div>
+
+            <!-- Rating - stars -->
+
+            <div class="mb-8">
+              <h5 class="mb-3">Rating</h5>
+              <form
+                [formGroup]="starsFilterForm"
+              >
+                <div
+                  *ngFor="let item of stars$ | async"
+                  class="form-check mb-2"
+                >
+                  <input
+                    [id]="item.id"
+                    class="form-check-input"
+                    type="radio"
+                    name="rating"
+                    formControlName="rating"
+                    [value]="item.value"
+                  /><label [for]="item.id" class="form-check-label">
+                    <small class="text-warning">
+                      <i
+                        *ngFor="let val of item.stars"
+                        class="bi"
+                        [ngClass]="{
+                          'bi-star-fill': val === 1,
+                          'bi-star': val === 0,
+                          'bi-star-half': val === 0.5
+                        }"
+                      ></i>
+                    </small>
+                  </label>
+                </div>
+              </form>
             </div>
           </div>
         </div>
       </aside>
 
-      <section class="col-lg-9 col-md-12">
+      <section class="col-lg-9 col-md-12" *ngIf="productsListOfPagination$ | async as products">
         <!-- card  -->
         <div class="card mb-4 bg-light border-0">
           <!-- card-body -->
-          <div class="card-body p-9" *ngIf="oneCategory$ | async as item">
-            <h2 class="mb-0 fs-1">{{ item.name }}</h2>
+          <div class="card-body p-9" *ngIf="oneCategory$ | async as oneCategory">
+            <h2 class="mb-0 fs-1">{{ oneCategory.name }}</h2>
           </div>
         </div>
         <!-- text -->
         <div
           class="d-lg-flex justify-content-between align-items-center"
-          *ngIf="productList$ | async as item"
+          
         >
           <div class="mb-3 mb-lg-0">
             <p class="mb-0">
-              <span class="text-dark">{{ item.length }}</span>
+              <span class="text-dark">{{ products.length }}</span>
               Products found
             </p>
           </div>
@@ -72,19 +151,16 @@
             <div class="d-flex mt-2 mt-lg-0">
               <div>
                 <!-- select option -->
-                <!-- <form
-                  [formGroup]="filterForm"
-                  (ngSubmit)="onFilterFormSubmitted(filterForm)"
-                >
-                  <select class="form-select">
+                <form [formGroup]="sortAscDescForm">
+                  <select class="form-select" formControlName="sortBy">
+                    <option [ngValue]="" hidden>Featured</option>
                     <option
                       *ngFor="let item of sorting$ | async"
-                      [value]="item"
-                    >
+                      [ngValue]="item">
                       {{ item.name }}
                     </option>
                   </select>
-                </form> -->
+                </form>
               </div>
             </div>
           </div>
@@ -96,7 +172,7 @@
             <!-- card -->
             <div
               class="card card-product"
-              *ngFor="let item of productsListOfPagination$ | async"
+              *ngFor="let product of products"
             >
               <!-- card body -->
               <div class="card-body">
@@ -107,7 +183,7 @@
                       <a>
                         <!-- img -->
                         <img
-                          src="{{ item.imageUrl }}"
+                          src="{{ product.imageUrl }}"
                           alt=""
                           class="mb-3 img-fluid"
                         />
@@ -118,22 +194,22 @@
                     <!-- heading -->
                     <div
                       class="text-small mb-1"
-                      *ngIf="oneCategory$ | async as item"
+                      *ngIf="oneCategory$ | async as oneCategory"
                     >
                       <a href="#!" class="text-decoration-none text-muted">
-                        <small>{{ item.name }}</small>
+                        <small>{{ oneCategory.name }}</small>
                       </a>
                     </div>
                     <h2 class="fs-6">
                       <a class="text-inherit text-decoration-none">{{
-                        item.name
+                        product.name
                       }}</a>
                     </h2>
                     <div>
                       <!-- rating -->
                       <small class="text-warning">
                         <i
-                          *ngFor="let val of item.ratingOptions"
+                          *ngFor="let val of product.ratingOptions"
                           class="bi"
                           [ngClass]="{
                             'bi-star-fill': val === 1,
@@ -143,14 +219,14 @@
                         ></i>
                       </small>
                       <span class="text-muted small"
-                        >{{ item.ratingValue }}({{ item.ratingCount }})</span
+                        >{{ product.ratingValue }}({{ product.ratingCount }})</span
                       >
                     </div>
                     <div class="mt-6">
                       <!-- price -->
                       <div>
                         <span class="text-dark">{{
-                          item.price | currency
+                          product.price | currency
                         }}</span>
                       </div>
                     </div>
@@ -164,15 +240,19 @@
     </div>
   </div>
 </div>
-<section class="my-lg-14 my-8" *ngIf="paginationParams$|async as params">
-  <div class="container" >
+
+<section class="my-lg-14 my-8" *ngIf="paginationParams$ | async as params">
+  <div class="container">
     <div class="row">
       <div class="pt-10 d-flex flex-row justify-content-between">
         <nav>
           <h6>Limit</h6>
-          <ul class="pagination" >
-            <li class="page-item" *ngFor="let item of limitOptions$ | async" [ngClass]="{active: item===params.pageSize}">
-
+          <ul class="pagination">
+            <li
+              class="page-item"
+              *ngFor="let item of limitOptions$ | async"
+              [ngClass]="{ active: item === params.pageSize }"
+            >
               <a class="page-link" (click)="onPageSizeChange(item)">{{
                 item
               }}</a>
@@ -183,10 +263,13 @@
         <nav>
           <h6>Pagination</h6>
           <ul class="pagination">
-            <li class="page-item" *ngFor="let item of numberOfPages$ | async" >
-              <a class="page-link" (click)="onPageNumberChange(item)" [ngClass]="{active: item===params.pageNumber}">{{
-                item
-              }}</a>
+            <li class="page-item" *ngFor="let item of numberOfPages$ | async">
+              <a
+                class="page-link"
+                (click)="onPageNumberChange(item)"
+                [ngClass]="{ active: item === params.pageNumber }"
+                >{{ item }}</a
+              >
             </li>
           </ul>
         </nav>
