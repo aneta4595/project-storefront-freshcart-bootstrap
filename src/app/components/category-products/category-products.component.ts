@@ -196,7 +196,7 @@ export class CategoryProductsComponent {
           this._router.navigate([], {
             queryParams: {
               pageSize: data.params.pageSize,
-              pageNumber: Math.max(...data.pageNumber)
+              pageNumber: 1
             },
           });
         }
