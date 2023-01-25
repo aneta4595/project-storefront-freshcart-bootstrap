@@ -57,7 +57,7 @@ export class StoreProductsComponent {
       name: store.name,
       logoUrl: store.logoUrl,
       id: store.id,
-      distanceInMeters: (store.distanceInMeters / 1000),
+      distanceInMeters: Math.round(store.distanceInMeters / 100) / 10,
       tagIds: store.tagIds.map((sId) => storeTagMap[sId]?.name)
     }
   }

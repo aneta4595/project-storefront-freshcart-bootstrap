@@ -28,6 +28,7 @@
             <div class="d-flex align-items-center lh-1">
               <!-- Button -->
               <button
+              (click)="showHamburgerMenu()"
                 class="navbar-toggler collapsed"
                 type="button"
                 aria-controls="navbar-default"
@@ -47,7 +48,7 @@
 <div class="border-bottom pb-lg-4 pb-3">
   <nav class="navbar navbar-expand-lg navbar-light navbar-default pt-0 pb-0">
     <div class="container px-0 px-md-3">
-      <div class="offcanvas offcanvas-start p-4 p-lg-0">
+      <div class="offcanvas offcanvas-start p-4 p-lg-0" [ngClass]="{show: hamburgerMenu$|async}">
         <div
           class="d-flex justify-content-between align-items-center mb-2 d-block d-lg-none"
         >
@@ -57,12 +58,12 @@
               alt="eCommerce HTML Template"
             />
           </a>
-          <button type="button" class="btn-close" aria-label="Close"></button>
+          <button type="button" class="btn-close" aria-label="Close" (click)="hideHamburgerMenu()"></button>
         </div>
         <div class="d-block">
           <ul class="nav">
             <li *ngFor="let item of categoriesList$ | async" class="nav-item">
-              <a routerLink="categories/{{ item.id }}" class="nav-link">{{
+              <a routerLink="categories/{{ item.id }}" class="nav-link" (click)="hideHamburgerMenu()">{{
                 item.name
               }}</a>
             </li>
