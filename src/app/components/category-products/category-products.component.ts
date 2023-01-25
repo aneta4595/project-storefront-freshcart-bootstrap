@@ -27,6 +27,7 @@ import { ProductsService } from '../../services/products.service';
 import { StoresService } from '../../services/stores.service';
 import { StarFilterQuery } from 'src/app/queries/star-filter.query';
 import { RatingQuery } from 'src/app/queries/rating.query';
+import { HttpParams } from '@angular/common/http';
 
 @Component({
   selector: 'app-category-products',
@@ -63,7 +64,7 @@ export class CategoryProductsComponent {
   readonly sortValues$: Observable<SortQuery> =
     this.sortAscDescForm.valueChanges.pipe(
       map((form) => form.sortBy),
-      startWith({ name: 'Featured', sortBy: 'featureValue', direction: 'desc' })
+      startWith({ name: 'Featured', sortBy: 'featureValue', direction: 'desc' }), shareReplay(1)
     );
   readonly sortCheckboxForm: FormGroup = new FormGroup({});
 
@@ -170,7 +171,7 @@ export class CategoryProductsComponent {
       .pipe(
         map((params) => ({
           pageNumber: params['pageNumber'] ? +params['pageNumber'] : 1,
-          pageSize: params['pageSize'] ? +params['pageSize'] : 5,
+          pageSize: params['pageSize'] && +params['pageSize'] <= 15 ? +params['pageSize'] : 5,
         }))
       )
       .pipe(shareReplay(1));
@@ -188,8 +189,19 @@ export class CategoryProductsComponent {
         for (let i = 1; i <= numberOfPages; i++) {
           pageNumber.push(i);
         }
-        return pageNumber;
-      })
+        return {pageNumber: pageNumber, params: params};
+      }),
+      tap((data: {pageNumber: number[], params: PaginationQuery}) => {
+        if(Math.max(...data.pageNumber) < data.params.pageNumber){
+          this._router.navigate([], {
+            queryParams: {
+              pageSize: data.params.pageSize,
+              pageNumber: 1
+            },
+          });
+        }
+      }),
+      map((data: {pageNumber: number[], params: PaginationQuery}) => data.pageNumber)
     )
     .pipe(shareReplay(1));
 
