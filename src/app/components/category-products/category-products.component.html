@@ -24,7 +24,7 @@
                 id="categoryCollapseMenu"
                 *ngFor="let item of categoriesList$ | async"
               >
-                <a class="nav-link">
+                <a routerLink="/categories/{{item.id}}" class="nav-link">
                   {{ item.name }}
                   <i class="feather-icon icon-chevron-right"></i>
                 </a>
