@@ -5,10 +5,17 @@ import { ProductModel } from '../models/product.model';
 
 @Injectable({ providedIn: 'root' })
 export class ProductsService {
-  constructor(private _httpClient: HttpClient) {
-  }
+  constructor(private _httpClient: HttpClient) {}
 
   getAllProducts(): Observable<ProductModel[]> {
-    return this._httpClient.get<ProductModel[]>('https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-products');
+    return this._httpClient.get<ProductModel[]>(
+      'https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-products'
+    );
+  }
+
+  getOneProduct(productId: string): Observable<ProductModel> {
+    return this._httpClient.get<ProductModel>(
+      `https://6384fca14ce192ac60696c4b.mockapi.io/freshcart-products/${productId}`
+    );
   }
 }
