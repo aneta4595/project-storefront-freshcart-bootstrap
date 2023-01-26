@@ -31,82 +31,93 @@
 <section class="my-lg-14 my-8">
   <div class="container">
     <div class="row">
-        <div class="col-12 mb-6">
-            <h3 class="mb-0">Fruits & Vegetables</h3>
-          </div>
-          <div class="row justify-content-around">
-      <div class="card card-product col-2" *ngFor=" let item of fruitsAndVegetables$|async">
-        <div class="card-body">
-          <div class="text-center position-relative">
-            <!-- img -->
-            <a
-              ><img
-                src="{{item.imageUrl}}"
-                alt="Grocery Ecommerce Template"
-                class="mb-3 img-fluid"
-            /></a>
-          </div>
-          <!-- title -->
-          <h2 class="fs-6">{{item.name}}</h2>
-          <!-- price -->
-          <div class="d-flex justify-content-between align-items-center mt-3">
-            <div><span class="text-dark">{{item.price|currency}}</span></div>
-          </div>
-        </div>
+      <div class="col-12 mb-6">
+        <h3 class="mb-0">Fruits & Vegetables</h3>
       </div>
-    </div>
-</div>
-  </div>
-</section>
-
-
-<<section class="my-lg-14 my-8">
-    <div class="container">
-      <div class="row">
-          <div class="col-12 mb-6">
-              <h3 class="mb-0">Snack & Munchies</h3>
-            </div>
-            <div class="row justify-content-around">
-        <div class="card card-product col-2" *ngFor=" let item of SnackAndMunchies$|async">
+      <div class="row justify-content-around">
+        <div
+          class="card card-product col-2"
+          *ngFor="let item of fruitsAndVegetables$ | async"
+        >
           <div class="card-body">
             <div class="text-center position-relative">
               <!-- img -->
               <a
                 ><img
-                  src="{{item.imageUrl}}"
+                  src="{{ item.imageUrl }}"
                   alt="Grocery Ecommerce Template"
                   class="mb-3 img-fluid"
               /></a>
             </div>
             <!-- title -->
-            <h2 class="fs-6">{{item.name}}</h2>
+            <h2 class="fs-6">{{ item.name }}</h2>
             <!-- price -->
             <div class="d-flex justify-content-between align-items-center mt-3">
-              <div><span class="text-dark">{{item.price|currency}}</span></div>
+              <div>
+                <span class="text-dark">{{ item.price | currency }}</span>
+              </div>
             </div>
           </div>
         </div>
       </div>
     </div>
-</div>
-  </section>
+  </div>
+</section>
 
+<
 <section class="my-lg-14 my-8">
   <div class="container">
-    <div class="row" *ngIf="storesList$ | async as stores">
-      <h2>Stores</h2>
-      <p>
+    <div class="row">
+      <div class="col-12 mb-6">
+        <h3 class="mb-0">Snack & Munchies</h3>
+      </div>
+      <div class="row justify-content-around">
+        <div
+          class="card card-product col-2"
+          *ngFor="let item of SnackAndMunchies$ | async"
+        >
+          <div class="card-body">
+            <div class="text-center position-relative">
+              <!-- img -->
+              <a
+                ><img
+                  src="{{ item.imageUrl }}"
+                  alt="Grocery Ecommerce Template"
+                  class="mb-3 img-fluid"
+              /></a>
+            </div>
+            <!-- title -->
+            <h2 class="fs-6">{{ item.name }}</h2>
+            <!-- price -->
+            <div class="d-flex justify-content-between align-items-center mt-3">
+              <div>
+                <span class="text-dark">{{ item.price | currency }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="my-lg-14 my-8" *ngIf="storesList$ | async as stores">
+  <div class="container">
+    <div class="col-12 mb-6">
+      <h2 class="mb-1">Stores</h2>
+      <div class="col-12">
+        <div class="mb-4">
+      <h6>
         We have
         <span class="text-primary">{{ stores.length }} </span>
-
         vendors
-      </p>
+      </h6>
+    </div>
     </div>
     <div class="row">
       <div
         *ngFor="let item of storesList$ | async"
-        class="row col-md-4 col-lg-3 mb-5"
-      >
+        class="col-4 mb-5">
         <div class="card flex-row p-8 card-product">
           <div>
             <img
@@ -148,4 +159,5 @@
       </div>
     </div>
   </div>
+</div>
 </section>
