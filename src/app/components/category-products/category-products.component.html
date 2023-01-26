@@ -39,9 +39,10 @@
                 <div class="my-4">
                   <form [formGroup]="searchStoreForm">
                     <input
-                      type="text"
+                      type="search"
                       formControlName="store"
                       placeholder="Search by store"
+                      class="form-control mb-4 ng-pristine"
                     />
                   </form>
                 </div>
@@ -79,10 +80,12 @@
                       type="number"
                       formControlName="priceFrom"
                       placeholder="Price from"
+                      class="form-control mb-4 ng-pristine"
                     /><input
                       type="number"
                       formControlName="priceTo"
                       placeholder="Price To"
+                      class="form-control mb-4 ng-pristine"
                     />
                   </form>
                 </div>
@@ -130,17 +133,15 @@
       <section class="col-lg-9 col-md-12" *ngIf="productsListOfPagination$ | async as products">
         <!-- card  -->
         <div *ngIf="oneCategory$ | async as oneCategory">
-        <div class="card mb-4 bg-light border-0">
+        <div class="card mb-4 bg-light border-0 ">
           <!-- card-body -->
-          <div class="card-body p-9" >
+          <div class="card-body p-9 " >
             <h2 class="mb-0 fs-1">{{ oneCategory.name }}</h2>
           </div>
         </div>
         <!-- text -->
         <div
-          class="d-lg-flex justify-content-between align-items-center"
-          
-        >
+          class="d-lg-flex justify-content-between align-items-center">
           <div class="mb-3 mb-lg-0">
             <p class="mb-0">
               <span class="text-dark">{{ products.length }}</span>
@@ -172,7 +173,7 @@
           <div class="col">
             <!-- card -->
             <div
-              class="card card-product"
+              class="card card-product mb-6"
               *ngFor="let product of products"
             >
               <!-- card body -->
