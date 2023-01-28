@@ -7,10 +7,13 @@ import { ActivatedRoute } from '@angular/router';
 import { combineLatest, Observable } from 'rxjs';
 import { map, switchMap } from 'rxjs/operators';
 import { CategoryModel } from '../../models/category.model';
-import { ProductModel } from '../../models/product.model';
+import { ProductQuery } from '../../queries/product.query';
 import { CategoriesService } from '../../services/categories.service';
 import { ProductsService } from '../../services/products.service';
-import { ProductQuery } from '../../queries/product.query';
+import { WishlistService } from '../../services/wishlist.service';
+import { ProductModel } from '../../models/product.model';
+import { setTheme } from 'ngx-bootstrap/utils';
+import { ProductDetailQuery } from 'src/app/queries/product-detail.query';
 
 @Component({
   selector: 'app-product-detail',
@@ -26,34 +29,66 @@ export class ProductDetailComponent {
       )
     );
 
-  readonly oneProduct$: Observable<ProductQuery> =
-    this._activatedRoute.params.pipe(
-      switchMap((data) =>
-        this._productsService
-          .getOneProduct(data['productId'])
-          .pipe(map((product) => this._mapToProductQuery(product)))
-      )
-    );
+  readonly oneProduct$: Observable<ProductDetailQuery> = combineLatest([
+    this._activatedRoute.params,
+    this._categoriesService.getAllCategories(),
+    this._productsService.getAllProducts(),
+  ]).pipe(
+    switchMap(([params, categories, products]) =>
+      this._productsService
+        .getOneProduct(params['productId'])
+        .pipe(
+          map((oneProduct) =>
+            this._mapToProductDetailQuery(oneProduct, categories, products)
+          )
+        )
+    )
+  );
 
 
   constructor(
     private _categoriesService: CategoriesService,
     private _productsService: ProductsService,
-    private _activatedRoute: ActivatedRoute
-  ) {}
+    private _activatedRoute: ActivatedRoute,
+    private _wishlistService: WishlistService
+  ) {
+    setTheme('bs5');
+  }
 
-  private _mapToProductQuery(product: ProductModel): ProductQuery {
+  private _mapToProductDetailQuery(
+    oneProduct: ProductModel,
+    categories: CategoryModel[],
+    products: ProductModel[]
+  ): ProductDetailQuery {
+    const categoriesMap = categories.reduce(
+      (a, c) => ({ ...a, [c.id]: c }),
+      {} as Record<string, CategoryModel>
+    );
+    const categoryProductMap = products.filter(
+      (p) => p.categoryId === oneProduct.categoryId && p.id !== oneProduct.id
+    );
+
     return {
-      id: product.id,
-      name: product.name,
-      price: product.price,
-      categoryId: product.categoryId,
-      featureValue: product.featureValue,
-      imageUrl: product.imageUrl,
-      ratingCount: product.ratingCount,
-      ratingValue: product.ratingValue,
-      storeIds: product.storeIds,
-      ratingOptions: this._mapToRatingOptions(product.ratingValue),
+      id: oneProduct.id,
+      name: oneProduct.name,
+      price: oneProduct.price,
+      categoryId: oneProduct.categoryId,
+      categoryName: categoriesMap[oneProduct.categoryId]?.name,
+      featureValue: oneProduct.featureValue,
+      imageUrl: oneProduct.imageUrl,
+      ratingCount: oneProduct.ratingCount,
+      ratingValue: oneProduct.ratingValue,
+      storeIds: oneProduct.storeIds,
+      ratingOptions: this._mapToRatingOptions(oneProduct.ratingValue),
+      relatedProducts: categoryProductMap.map((p) => ({
+        id: p.name,
+        name: p.name,
+        price: p.price,
+        imageUrl: p.imageUrl,
+        ratingOptions: this._mapToRatingOptions(p.ratingValue),
+        ratingValue: p.ratingValue,
+        ratingCount: p.ratingCount
+      })).slice(0,5),
     };
   }
 
@@ -69,4 +104,9 @@ export class ProductDetailComponent {
     });
     return stars;
   }
+
+addProductToWishList(id: string): void {
+  this._wishlistService.addProductToWishList(id)
+}
+
 }
