@@ -46,8 +46,8 @@
   </div>
 </header>
 <div class="border-bottom pb-lg-4 pb-3">
-  <nav class="navbar navbar-expand-lg navbar-light navbar-default pt-0 pb-0">
-    <div class="container px-0 px-md-3">
+  <nav class="navbar navbar-expand-lg navbar-light navbar-default py-0 pb-0">
+    <div class="container px-0 md-2">
       <div
         class="offcanvas offcanvas-start p-4 p-lg-0"
         [ngClass]="{ show: hamburgerMenu$ | async }"
@@ -68,8 +68,68 @@
             (click)="hideHamburgerMenu()"
           ></button>
         </div>
+
         <div class="d-block">
           <ul class="navbar-nav">
+            <!--mega menu-->
+            <li class="nav-item dropdown dropdown-fullwidth">
+              <a
+                class="nav-link dropdown-toggle"
+                href="#"
+                role="button"
+                data-bs-toggle="dropdown"
+                aria-expanded="true"
+                >Mega menu</a
+              >
+              <div class="dropdown-menu pb-0" data-bs-popper="static">
+                <div class="row p-2 p-lg-4">
+                  <div class="col-lg-3 col-6 mb-4 mb-lg-0">
+                    <h6 class="text-primary ps-3">Dairy, Bread & Eggs</h6>
+                    <div *ngFor="let item of dairyAndBread$ | async">
+                      <a class="dropdown-item" routerLink="categories/2">{{
+                        item
+                      }}</a>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-6 mb-4 mb-lg-0">
+                    <h6 class="text-primary ps-3">Breakfast & Instant Food</h6>
+                    <div *ngFor="let item of breakfast$ | async">
+                      <a class="dropdown-item" routerLink="categories/2">{{
+                        item
+                      }}</a>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-6 mb-4 mb-lg-0">
+                    <h6 class="text-primary ps-3">Cold Drinks & Juices</h6>
+                    <div *ngFor="let item of coldDrinks$ | async">
+                      <a class="dropdown-item" routerLink="categories/2">{{
+                        item
+                      }}</a>
+                    </div>
+                  </div>
+                  <div class="col-lg-3 col-12 mb-4 mb-lg-0">
+                    <div class="card border-0">
+                      <img
+                        src="assets/images/banner/menu-banner.jpg"
+                        alt="eCommerce HTML Template"
+                        class="img-fluid"
+                      />
+                      <div class="position-absolute ps-6 mt-8">
+                        <h5 class="mb-0">
+                          Don't miss this
+                          <br />
+                          offer today.
+                        </h5>
+                        <a href="#" class="btn btn-primary btn-sm mt-3"
+                          >Shop Now</a
+                        >
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+
             <li *ngFor="let item of categoriesList$ | async" class="nav-item">
               <a
                 routerLink="categories/{{ item.id }}"
